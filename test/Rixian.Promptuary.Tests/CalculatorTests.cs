@@ -1,7 +1,11 @@
 // Copyright (c) Rixian. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// Licensed under the Apache License, Version 2.0 license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Security;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Rixian.Promptuary;
 using Xunit;
 using Xunit.Abstractions;
@@ -16,13 +20,15 @@ public class CalculatorTests
     }
 
     [Fact]
-    public void AddOrSubtract()
+    public void BaseTracker_Default()
     {
-        // This tests aggregation of code coverage across test runs.
-#if NETCOREAPP2_1
-        Assert.Equal(3, Calculator.Add(1, 2));
-#else
-        Assert.Equal(-1, Calculator.Subtract(1, 2));
-#endif
+        var tracker = new TestTracker();
+        Guid value = Guid.NewGuid();
+
+        tracker.Track(value);
+
+        IEnumerable<object> trackedValues = tracker.ListTrackedValues();
+        trackedValues.Should().HaveCount(1);
+        trackedValues.Should().Contain(value);
     }
 }
