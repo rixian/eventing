@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Builder
 {
-    using Rixian.Promptuary.AspNetCore;
+    using Rixian.Telemetry.AspNetCore;
 
     /// <summary>
     /// Extensions for registering the track middleware.

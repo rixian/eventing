@@ -1,14 +1,16 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0 license. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Promptuary.AspNetCore
+namespace Rixian.Telemetry.AspNetCore
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json.Linq;
-    using Rixian.Promptuary;
+    using Rixian.CloudEvents;
+    using Rixian.Telemetry;
+    using Rixian.Telemetry.Abstractions;
 
     /// <summary>
     /// Default implementation of IHttpTracker.
@@ -33,7 +35,7 @@ namespace Rixian.Promptuary.AspNetCore
         }
 
         /// <inheritdoc/>
-        public void Track(object value)
+        public void Track(CloudEvent value)
         {
             this.tracker.Track(value);
         }
@@ -41,7 +43,7 @@ namespace Rixian.Promptuary.AspNetCore
         /// <inheritdoc/>
         public void TrackCloudEvent(string eventType, Uri source, object payload)
         {
-            this.tracker.Track(CloudEvents.CloudEventV0_2.CreateCloudEvent(eventType, source, JObject.FromObject(payload)));
+            this.tracker.Track(CloudEvent.CreateCloudEvent(eventType, source, JObject.FromObject(payload)));
         }
 
         /// <inheritdoc/>

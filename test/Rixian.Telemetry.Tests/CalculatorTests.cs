@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Rixian.Promptuary;
+using Rixian.Telemetry;
 using Xunit;
 using Xunit.Abstractions;
 

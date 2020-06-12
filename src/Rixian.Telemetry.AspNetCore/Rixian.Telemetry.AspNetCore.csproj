@@ -9,11 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rixian.CloudEvents" Version="2.1.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Rixian.Promptuary.DependencyInjection\Rixian.Promptuary.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Rixian.Telemetry.DependencyInjection\Rixian.Telemetry.csproj" />
   </ItemGroup>
 
 </Project>

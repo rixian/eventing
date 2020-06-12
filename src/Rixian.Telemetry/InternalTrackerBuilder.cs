@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Rixian.Promptuary;
+    using Rixian.Telemetry;
 
     /// <summary>
     /// Default implementation of ITrackerBuilder.

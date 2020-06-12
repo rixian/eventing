@@ -3,7 +3,7 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Rixian.Promptuary.AspNetCore;
+    using Rixian.Telemetry.AspNetCore;
 
     /// <summary>
     /// Extensions for configuring the ITracker.

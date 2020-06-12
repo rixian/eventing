@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0 license. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Promptuary.AzureEventHubs
+namespace Rixian.Telemetry.AzureEventHubs
 {
     using System;
     using System.Collections.Generic;
@@ -11,9 +11,12 @@ namespace Rixian.Promptuary.AzureEventHubs
     using Azure.Messaging.EventHubs;
     using Azure.Messaging.EventHubs.Producer;
     using Microsoft.Extensions.Options;
+    using Newtonsoft.Json.Linq;
     using Polly;
     using Polly.Retry;
-    using Rixian.Promptuary;
+    using Rixian.CloudEvents;
+    using Rixian.Telemetry;
+    using Rixian.Telemetry.Abstractions;
 
     /// <summary>
     /// Tracker that writes to Azure Event Hubs.
@@ -22,14 +25,14 @@ namespace Rixian.Promptuary.AzureEventHubs
     {
         private readonly AsyncRetryPolicy retryPolicy;
         private readonly IOptions<AzureEventHubTrackerConfig> options;
-        private readonly ITrackerProperties? trackerProperties;
+        private readonly ITrackerTagger? trackerTagger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AzureEventHubTracker"/> class.
         /// </summary>
         /// <param name="options">The configuration options for the AzureEventHubTracker.</param>
-        /// <param name="trackerProperties">Extra properties to include in the tracked data.</param>
-        public AzureEventHubTracker(IOptions<AzureEventHubTrackerConfig> options, ITrackerProperties? trackerProperties = null)
+        /// <param name="trackerTagger">Extra properties to include in the tracked data.</param>
+        public AzureEventHubTracker(IOptions<AzureEventHubTrackerConfig> options, ITrackerTagger? trackerTagger = null)
         {
             if (options is null)
             {
@@ -37,7 +40,7 @@ namespace Rixian.Promptuary.AzureEventHubs
             }
 
             this.options = options;
-            this.trackerProperties = trackerProperties;
+            this.trackerTagger = trackerTagger;
             this.retryPolicy = Policy
               .Handle<Exception>()
               .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
@@ -49,13 +52,22 @@ namespace Rixian.Promptuary.AzureEventHubs
             await using var producerClient = new EventHubProducerClient(this.options.Value.EventHubConnectionString);
             using EventDataBatch eventBatch = await producerClient.CreateBatchAsync().ConfigureAwait(false);
 
-            foreach (var value in this.TrackedValues)
+            foreach (CloudEvent? value in this.TrackedValues)
             {
-                eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new EventObject()
+                if (this.trackerTagger?.Tags is object)
                 {
-                    Data = value,
-                    Properties = this.trackerProperties?.Properties,
-                }))));
+                    if (value.ExtensionAttributes is null)
+                    {
+                        value.ExtensionAttributes = new Dictionary<string, JToken>();
+                    }
+
+                    foreach (KeyValuePair<string, object> tag in this.trackerTagger.Tags)
+                    {
+                        value.ExtensionAttributes[tag.Key] = JToken.FromObject(tag.Value);
+                    }
+                }
+
+                eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(value))));
             }
 
             // When the producer sends the event, it will receive an acknowledgment from the Event Hubs service; so

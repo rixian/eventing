@@ -29,15 +29,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{36CCE840-6
 		test\Directory.Build.targets = test\Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Promptuary", "src\Rixian.Promptuary\Rixian.Promptuary.csproj", "{605A048A-5684-4B31-9D71-D3AC20AAA5D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Telemetry.Tests", "test\Rixian.Telemetry.Tests\Rixian.Telemetry.Tests.csproj", "{7914B423-3B8A-4E11-8E8D-058EE09745E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Promptuary.Tests", "test\Rixian.Promptuary.Tests\Rixian.Promptuary.Tests.csproj", "{7914B423-3B8A-4E11-8E8D-058EE09745E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Telemetry.AzureEventHubs", "src\Rixian.Telemetry.AzureEventHubs\Rixian.Telemetry.AzureEventHubs.csproj", "{E35DBBD0-E0FC-4AE4-AB2B-CE2488FEDD53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rixian.Promptuary.AzureEventHubs", "src\Rixian.Promptuary.AzureEventHubs\Rixian.Promptuary.AzureEventHubs.csproj", "{E35DBBD0-E0FC-4AE4-AB2B-CE2488FEDD53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Telemetry.AspNetCore", "src\Rixian.Telemetry.AspNetCore\Rixian.Telemetry.AspNetCore.csproj", "{007AD890-0778-4CD5-BC20-D8413F0711AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rixian.Promptuary.AspNetCore", "src\Rixian.Promptuary.AspNetCore\Rixian.Promptuary.AspNetCore.csproj", "{007AD890-0778-4CD5-BC20-D8413F0711AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Telemetry.Abstractions", "src\Rixian.Telemetry.Abstractions\Rixian.Telemetry.Abstractions.csproj", "{54D1DF4A-6160-4608-90AE-0340AD3E229E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Promptuary.DependencyInjection", "src\Rixian.Promptuary.DependencyInjection\Rixian.Promptuary.DependencyInjection.csproj", "{45D88D8A-C283-4FE5-9AA0-D12DA3818880}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Telemetry", "src\Rixian.Telemetry\Rixian.Telemetry.csproj", "{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{605A048A-5684-4B31-9D71-D3AC20AAA5D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{605A048A-5684-4B31-9D71-D3AC20AAA5D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{605A048A-5684-4B31-9D71-D3AC20AAA5D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{605A048A-5684-4B31-9D71-D3AC20AAA5D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7914B423-3B8A-4E11-8E8D-058EE09745E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7914B423-3B8A-4E11-8E8D-058EE09745E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7914B423-3B8A-4E11-8E8D-058EE09745E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,20 +57,24 @@ Global
 		{007AD890-0778-4CD5-BC20-D8413F0711AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{007AD890-0778-4CD5-BC20-D8413F0711AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{007AD890-0778-4CD5-BC20-D8413F0711AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45D88D8A-C283-4FE5-9AA0-D12DA3818880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45D88D8A-C283-4FE5-9AA0-D12DA3818880}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45D88D8A-C283-4FE5-9AA0-D12DA3818880}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45D88D8A-C283-4FE5-9AA0-D12DA3818880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D1DF4A-6160-4608-90AE-0340AD3E229E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D1DF4A-6160-4608-90AE-0340AD3E229E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D1DF4A-6160-4608-90AE-0340AD3E229E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D1DF4A-6160-4608-90AE-0340AD3E229E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{605A048A-5684-4B31-9D71-D3AC20AAA5D1} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
 		{7914B423-3B8A-4E11-8E8D-058EE09745E9} = {36CCE840-6FE5-4DB9-A8D5-8CF3CB6D342A}
 		{E35DBBD0-E0FC-4AE4-AB2B-CE2488FEDD53} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
 		{007AD890-0778-4CD5-BC20-D8413F0711AF} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
-		{45D88D8A-C283-4FE5-9AA0-D12DA3818880} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
+		{54D1DF4A-6160-4608-90AE-0340AD3E229E} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
+		{6E09CE61-F3AE-41D1-B96B-6CA00D41D41A} = {9E154A29-1796-4B85-BD81-B6A385D8FF71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3944F6A-384B-4B0F-B93F-3BD513DC57BD}

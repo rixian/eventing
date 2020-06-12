@@ -3,8 +3,8 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Rixian.Promptuary;
-    using Rixian.Promptuary.AzureEventHubs;
+    using Rixian.Telemetry;
+    using Rixian.Telemetry.AzureEventHubs;
 
     /// <summary>
     /// Extensions for configuring the AzureEventHubTracker.

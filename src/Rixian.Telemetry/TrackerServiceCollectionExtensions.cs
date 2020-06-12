@@ -3,7 +3,8 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Rixian.Promptuary;
+    using Rixian.Telemetry;
+    using Rixian.Telemetry.Abstractions;
 
     /// <summary>
     /// Extensions for registering ITracker with the ServiceCollection.
@@ -17,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The ITrackerBuilder instance.</returns>
         public static ITrackerBuilder AddTracking(this IServiceCollection services)
         {
-            services.AddScoped<ITrackerProperties, DefaultTrackerProperties>();
+            services.AddScoped<ITrackerTagger, DefaultTrackerTagger>();
             return new InternalTrackerBuilder(services);
         }
     }
