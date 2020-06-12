@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rixian.Telemetry\Rixian.Telemetry.Abstractions.csproj" />
+    <ProjectReference Include="..\Rixian.Telemetry.Abstractions\Rixian.Telemetry.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
