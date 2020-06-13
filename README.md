@@ -2,7 +2,7 @@
 
 ***An awesome template for your awesome library***
 
-[![NuGet package](https://img.shields.io/nuget/v/Rixian.Telemetry.svg)](https://nuget.org/packages/Rixian.Telemetry)
+[![NuGet package](https://img.shields.io/nuget/v/Rixian.Eventing.svg)](https://nuget.org/packages/Rixian.Eventing)
 
 
 ## Features

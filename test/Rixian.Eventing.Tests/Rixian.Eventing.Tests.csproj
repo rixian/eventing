@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Rixian.Telemetry\Rixian.Telemetry.csproj" />
+    <ProjectReference Include="..\..\src\Rixian.Eventing\Rixian.Eventing.csproj" />
   </ItemGroup>
 
 </Project>

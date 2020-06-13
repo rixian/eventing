@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0 license. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Telemetry.AspNetCore
+namespace Rixian.Eventing.AspNetCore
 {
     using System.Diagnostics;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using Rixian.Telemetry.Abstractions;
+    using Rixian.Eventing.Abstractions;
 
     /// <summary>
     /// Middleware for flushing the current tracker after a request.
@@ -29,9 +30,8 @@ namespace Rixian.Telemetry.AspNetCore
         /// </summary>
         /// <param name="httpContext">The HttpContext.</param>
         /// <param name="tracker">The ITracker instance.</param>
-        /// <param name="tagger">The ITrackerProperties instance.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task Invoke(HttpContext httpContext, ITracker tracker, ITrackerTagger tagger)
+        public async Task Invoke(HttpContext httpContext, ITracker tracker)
         {
             if (httpContext is null)
             {
@@ -43,22 +43,37 @@ namespace Rixian.Telemetry.AspNetCore
                 throw new System.ArgumentNullException(nameof(tracker));
             }
 
-            if (tagger is null)
-            {
-                throw new System.ArgumentNullException(nameof(tagger));
-            }
+            tracker.Tags["http.traceIdentifier"] = httpContext.TraceIdentifier;
+            tracker.Tags["http.request.path"] = httpContext.Request.Path;
+            tracker.Tags["http.request.method"] = httpContext.Request.Method;
 
-            tagger.Tags["aspnet.traceIdentifier"] = httpContext.TraceIdentifier;
-            tagger.Tags["aspnet.request.path"] = httpContext.Request.Path;
-            tagger.Tags["aspnet.request.method"] = httpContext.Request.Method;
-            tagger.Tags["aspnet.request.host"] = httpContext.Request.Host;
+            if (httpContext.Request.Host.HasValue)
+            {
+                tracker.Tags["http.request.host"] = httpContext.Request.Host.Value;
+            }
 
             var sw = Stopwatch.StartNew();
             await this.next(httpContext).ConfigureAwait(false);
             sw.Stop();
 
-            tagger.Tags["aspnet.response.status_code"] = httpContext.Response.StatusCode;
-            tagger.Tags["aspnet.elapsed_milliseconds"] = sw.ElapsedMilliseconds;
+            tracker.Tags["http.response.status_code"] = httpContext.Response.StatusCode;
+            tracker.Tags["http.elapsed_milliseconds"] = sw.ElapsedMilliseconds;
+
+            // Identity tags
+            if (httpContext.User?.Identity?.IsAuthenticated ?? false)
+            {
+                var sub = httpContext.User.FindFirstValue("sub");
+                if (string.IsNullOrWhiteSpace(sub) == false)
+                {
+                    tracker.Tags["http.identity.sub"] = sub;
+                }
+
+                var clientId = httpContext.User.FindFirstValue("client_id");
+                if (string.IsNullOrWhiteSpace(clientId) == false)
+                {
+                    tracker.Tags["http.identity.client_id"] = clientId;
+                }
+            }
 
             await tracker.FlushAsync().ConfigureAwait(false);
         }

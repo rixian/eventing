@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Rixian.Telemetry\Rixian.Telemetry.csproj" />
+    <ProjectReference Include="..\Rixian.Eventing\Rixian.Eventing.csproj" />
   </ItemGroup>
 
 </Project>

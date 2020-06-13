@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Rixian.Telemetry;
+using Rixian.Eventing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,13 +22,7 @@ public class CalculatorTests
     [Fact]
     public void BaseTracker_Default()
     {
-        var tracker = new TestTracker();
-        Guid value = Guid.NewGuid();
-
-        tracker.Track(value);
-
-        IEnumerable<object> trackedValues = tracker.ListTrackedValues();
-        trackedValues.Should().HaveCount(1);
-        trackedValues.Should().Contain(value);
+        var sink = new TestTrackerSink();
+        sink.Should().NotBeNull();
     }
 }

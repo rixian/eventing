@@ -3,26 +3,27 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Rixian.Telemetry.AspNetCore;
+    using Rixian.Eventing.Abstractions;
+    using Rixian.Eventing.Sinks.Notepad;
 
     /// <summary>
-    /// Extensions for configuring the ITracker.
+    /// Extensions for configuring the NotepadTracker.
     /// </summary>
-    public static class TrackerServiceCollectionExtensions
+    public static class NotepadTrackerServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers IHttpTracker.
+        /// Configures the AzureEventHubTracker.
         /// </summary>
         /// <param name="trackerBuilder">The ITrackerBuilder instance.</param>
         /// <returns>The updated ITrackerBuilder instance.</returns>
-        public static ITrackerBuilder WithHttpProperties(this ITrackerBuilder trackerBuilder)
+        public static ITrackerBuilder WithNotepadSink(this ITrackerBuilder trackerBuilder)
         {
             if (trackerBuilder is null)
             {
                 throw new System.ArgumentNullException(nameof(trackerBuilder));
             }
 
-            trackerBuilder.Services.AddScoped<IHttpTracker, DefaultHttpTracker>();
+            trackerBuilder.Services.AddScoped<ITrackerSink, NotepadTrackerSink>();
 
             return trackerBuilder;
         }

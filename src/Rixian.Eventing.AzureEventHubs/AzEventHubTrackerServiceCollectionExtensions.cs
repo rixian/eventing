@@ -3,8 +3,9 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Rixian.Telemetry;
-    using Rixian.Telemetry.AzureEventHubs;
+    using Rixian.Eventing;
+    using Rixian.Eventing.Abstractions;
+    using Rixian.Eventing.Sinks.AzureEventHubs;
 
     /// <summary>
     /// Extensions for configuring the AzureEventHubTracker.
@@ -28,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 o.EventHubConnectionString = eventHubConnectionString;
             });
-            trackerBuilder.Services.AddScoped<ITracker, AzureEventHubTracker>();
+            trackerBuilder.Services.AddScoped<ITrackerSink, AzureEventHubTrackerSink>();
 
             return trackerBuilder;
         }

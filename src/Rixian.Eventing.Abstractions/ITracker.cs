@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0 license. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Telemetry.Abstractions
+namespace Rixian.Eventing.Abstractions
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Rixian.CloudEvents;
 
@@ -11,6 +13,11 @@ namespace Rixian.Telemetry.Abstractions
     /// </summary>
     public interface ITracker
     {
+        /// <summary>
+        /// Gets the collection of properties to include with all tracked data.
+        /// </summary>
+        IDictionary<string, object?> Tags { get; }
+
         /// <summary>
         /// Flushed the currently tracked events to the underlying store.
         /// </summary>

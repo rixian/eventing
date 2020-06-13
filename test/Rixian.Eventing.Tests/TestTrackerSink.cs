@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Security;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Rixian.Telemetry;
+using Rixian.CloudEvents;
+using Rixian.Eventing;
+using Rixian.Eventing.Abstractions;
 using Xunit;
 using Xunit.Abstractions;
 
-public class TestTracker : BaseTracker
+public class TestTrackerSink : ITrackerSink
 {
-    public override Task FlushAsync()
+    public Task FlushAsync(IEnumerable<CloudEvent> events)
     {
         return Task.CompletedTask;
     }
-
-    public IEnumerable<object> ListTrackedValues() => this.TrackedValues;
 }
