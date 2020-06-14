@@ -1,35 +1,55 @@
-# Your Library
-
-***An awesome template for your awesome library***
+# Rixian Eventing
 
 [![NuGet package](https://img.shields.io/nuget/v/Rixian.Eventing.svg)](https://nuget.org/packages/Rixian.Eventing)
 
-
 ## Features
 
-* Follow the best and simplest patterns of build, pack and test with dotnet CLI.
-* Init script that installs prerequisites and auth helpers, supporting both non-elevation and elevation modes.
-* Static analyzers: [FxCop](https://docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-analyzers?view=vs-2019) and [StyleCop](https://github.com/DotNetAnalyzers/StyleCopAnalyzers)
-* Read-only source tree (builds to top-level bin/obj folders)
-* Auto-versioning (via [Nerdbank.GitVersioning](https://github.com/dotnet/nerdbank.gitversioning))
-* Builds with a "pinned" .NET Core SDK to ensure reproducible builds across machines and across time.
-* Automatically pack the library and publish it as an artifact, and even push it to some NuGet feed for consumption.
-* Testing
-  * Testing on .NET Framework, multiple .NET Core versions
-  * Testing on Windows, Linux and OSX
-  * Tests that crash or hang in Azure Pipelines automatically collect dumps and publish as a pipeline artifact for later investigation.
-* Cloud build support
-  * YAML based build for long-term serviceability, and PR review opportunities for any changes.
-  * Azure Pipelines and GitHub Action support
-  * Emphasis on PowerShell scripts over reliance on tasks for a more locally reproducible build.
-  * Code coverage published to Azure Pipelines
-  * Code coverage published to codecov.io so GitHub PRs get code coverage results added as a PR comment
+* Simple event tracking with the `IEventTracker` interface.
+* Event augmentation with custom fields.
+* Event payload follows the [CloudEvent v1.0 spec](https://github.com/cloudevents/spec/blob/v1.0/spec.md).
+* ASP.NET Core integration:
+  * Auto-flush at the end of each request.
+  * Automatically extend the payload with request information.
+  * Extensions for tracking commonly used events, such as api invocation or page views.
+* Various sink providers for writing events:
+  * Azure Event Hubs
+  * Notepad
 
-## Consumption
+## Getting Started
 
-Once you've expanded this template for your own use, you should **run the `Expand-Template.ps1` script** to customize the template for your own project.
+This will assume you are working with an ASP.NET Core application. The following steps will help you get the library installed and configured:
 
-Further customize your repo by:
+1. Install the NuGet package:
 
-1. Verify the license is suitable for your goal as it appears in the LICENSE and stylecop.json files and the Directory.Build.props file's `PackageLicenseExpression` property.
-1. Reset or replace the badges at the top of this file.
+   ```bash
+   dotnet add package Rixian.Eventing.AspNetCore
+   ```
+
+2. Register the event tracker services:
+
+   ```csharp
+   services
+       .AddTracking("fabrikam-api")
+       .WithHostInfo()
+       .WithNotepadSink();
+   ```
+
+3. Register the middleware to flush events at the end of each request:
+
+   ```csharp
+   public void Configure(IApplicationBuilder app)
+   {
+       app.UseTracker();
+       ...
+   }
+    ```
+
+4. Use in a controller:
+
+   ```
+   public DefaultController(ITracker tracker)
+   {
+       CloudEvent cloudEvent = CloudEvent.CreateCloudEvent("test", new Uri("/", UriKind.Relative), "A test message");
+       tracker.Track(cloudEvent);
+   }
+   ```
