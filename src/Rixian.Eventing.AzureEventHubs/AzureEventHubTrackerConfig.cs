@@ -3,6 +3,9 @@
 
 namespace Rixian.Eventing.Sinks.AzureEventHubs
 {
+    using System;
+    using Rixian.CloudEvents;
+
     /// <summary>
     /// Configuration for the AzureEventHubTracker class.
     /// </summary>
@@ -12,5 +15,10 @@ namespace Rixian.Eventing.Sinks.AzureEventHubs
         /// Gets or sets the Event Hub connection string. Must include the name of the Event Hub.
         /// </summary>
         public string? EventHubConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets a delegate for previewing cloud events.
+        /// </summary>
+        public Action<CloudEvent?>? PreviewCloudEvents { get; set; }
     }
 }
