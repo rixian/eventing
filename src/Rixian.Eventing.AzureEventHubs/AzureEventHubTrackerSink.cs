@@ -55,6 +55,15 @@ namespace Rixian.Eventing.Sinks.AzureEventHubs
             await using var producerClient = new EventHubProducerClient(this.options.Value.EventHubConnectionString);
             using EventDataBatch eventBatch = await producerClient.CreateBatchAsync().ConfigureAwait(false);
 
+            Action<CloudEvent?>? previewCloudEvents = this.options?.Value?.PreviewCloudEvents;
+            if (previewCloudEvents is object)
+            {
+                foreach (CloudEvent? value in events)
+                {
+                    previewCloudEvents.Invoke(value);
+                }
+            }
+
             foreach (CloudEvent? value in events)
             {
                 eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value))));
