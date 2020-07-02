@@ -3,6 +3,9 @@
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    using System.Threading.Channels;
+    using Rixian.Eventing;
+    using Rixian.Eventing.Abstractions;
     using Rixian.Eventing.AspNetCore;
 
     /// <summary>
@@ -22,7 +25,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new System.ArgumentNullException(nameof(trackerBuilder));
             }
 
+            trackerBuilder.Services.AddScoped<ITracker, AspNetCoreTracker>();
             trackerBuilder.Services.AddScoped<IHttpTracker, DefaultHttpTracker>();
+            var channel = Channel.CreateUnbounded<TrackerSession>(new UnboundedChannelOptions { SingleReader = true });
+            trackerBuilder.Services.AddSingleton(channel.Reader);
+            trackerBuilder.Services.AddSingleton(channel.Writer);
+            trackerBuilder.Services.AddHostedService<TrackingFlushService>();
 
             return trackerBuilder;
         }

@@ -5,6 +5,7 @@ namespace Rixian.Eventing.Sinks.AzureEventHubs
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Rixian.Eventing.Sinks.AzureEventHubs
             this.options = options;
             this.retryPolicy = Policy
               .Handle<Exception>()
-              .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+              .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
 
         /// <inheritdoc/>
@@ -50,6 +51,11 @@ namespace Rixian.Eventing.Sinks.AzureEventHubs
             if (events is null)
             {
                 throw new ArgumentNullException(nameof(events));
+            }
+
+            if (events.Any() == false)
+            {
+                return;
             }
 
             await using var producerClient = new EventHubProducerClient(this.options.Value.EventHubConnectionString);

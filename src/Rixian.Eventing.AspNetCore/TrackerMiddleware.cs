@@ -7,6 +7,7 @@ namespace Rixian.Eventing.AspNetCore
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Logging;
     using Rixian.Eventing.Abstractions;
 
     /// <summary>
@@ -15,14 +16,17 @@ namespace Rixian.Eventing.AspNetCore
     public class TrackerMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<TrackerMiddleware> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackerMiddleware"/> class.
         /// </summary>
         /// <param name="next">The next middleware to execute.</param>
-        public TrackerMiddleware(RequestDelegate next)
+        /// <param name="logger">The ILogger for this middleware.</param>
+        public TrackerMiddleware(RequestDelegate next, ILogger<TrackerMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -43,39 +47,57 @@ namespace Rixian.Eventing.AspNetCore
                 throw new System.ArgumentNullException(nameof(tracker));
             }
 
-            tracker.Tags["http.traceIdentifier"] = httpContext.TraceIdentifier;
-            tracker.Tags["http.request.path"] = httpContext.Request.Path;
-            tracker.Tags["http.request.method"] = httpContext.Request.Method;
-
-            if (httpContext.Request.Host.HasValue)
+            try
             {
-                tracker.Tags["http.request.host"] = httpContext.Request.Host.Value;
+                tracker.Tags["http.traceIdentifier"] = httpContext.TraceIdentifier;
+                tracker.Tags["http.request.path"] = httpContext.Request.Path;
+                tracker.Tags["http.request.method"] = httpContext.Request.Method;
+
+                if (httpContext.Request.Host.HasValue)
+                {
+                    tracker.Tags["http.request.host"] = httpContext.Request.Host.Value;
+                }
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (System.Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                this.logger.LogError(ex, Properties.Resources.MiddlewarePreviewPhaseErrorMessage);
             }
 
             var sw = Stopwatch.StartNew();
             await this.next(httpContext).ConfigureAwait(false);
             sw.Stop();
 
-            tracker.Tags["http.response.status_code"] = httpContext.Response.StatusCode;
-            tracker.Tags["http.elapsed_milliseconds"] = sw.ElapsedMilliseconds;
-
-            // Identity tags
-            if (httpContext.User?.Identity?.IsAuthenticated ?? false)
+            try
             {
-                var sub = httpContext.User.FindFirstValue("sub");
-                if (string.IsNullOrWhiteSpace(sub) == false)
+                tracker.Tags["http.response.status_code"] = httpContext.Response.StatusCode;
+                tracker.Tags["http.elapsed_milliseconds"] = sw.ElapsedMilliseconds;
+
+                // Identity tags
+                if (httpContext.User?.Identity?.IsAuthenticated ?? false)
                 {
-                    tracker.Tags["http.identity.sub"] = sub;
+                    var sub = httpContext.User.FindFirstValue("sub");
+                    if (string.IsNullOrWhiteSpace(sub) == false)
+                    {
+                        tracker.Tags["http.identity.sub"] = sub;
+                    }
+
+                    var clientId = httpContext.User.FindFirstValue("client_id");
+                    if (string.IsNullOrWhiteSpace(clientId) == false)
+                    {
+                        tracker.Tags["http.identity.client_id"] = clientId;
+                    }
                 }
 
-                var clientId = httpContext.User.FindFirstValue("client_id");
-                if (string.IsNullOrWhiteSpace(clientId) == false)
-                {
-                    tracker.Tags["http.identity.client_id"] = clientId;
-                }
+                await tracker.FlushAsync().ConfigureAwait(false);
             }
-
-            await tracker.FlushAsync().ConfigureAwait(false);
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (System.Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                this.logger.LogError(ex, Properties.Resources.MiddlewarePostPhaseErrorMessage);
+            }
         }
     }
 }
